@@ -1,0 +1,48 @@
+<head>
+  <style> 
+    input {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<h1 style="text-align:center; color:2987FF; font-family: Arial, Geneva, Helvetica, sans-serif;">CHAT APP</h1>
+<div id="TextOutput" style="height:120px;width:100%;border:2px solid #2987FF;font-family: Arial, Geneva, Helvetica, sans-serif;overflow:auto;">
+</div></br>
+
+<input name="InputName" type="text" id="InputName" placeholder="Enter Name Here..." style="height:25px;border:2px solid #2987FF;font:16px/26px Georgia, Garamond, Serif;"></input></br></br>
+<input name="InputText" type="text" id="InputText" placeholder="Enter Message Here..." style="height:25px;border:2px solid #2987FF;font:16px/26px Georgia, Garamond, Serif;"></input></br></br>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+
+  var InputText = document.getElementById('InputText').value;
+  var InputText = document.getElementById('InputName').value;
+
+  socket.on('ChangeText',function(data){
+    console.log(data.textChange);
+    document.getElementById("TextOutput").innerHTML += '<li>' + data.textChange + '</li>';
+    var elem = document.getElementById('TextOutput');
+    elem.scrollTop = elem.scrollHeight;
+  })
+  socket.on('Load',function(data){
+    document.getElementById("TextOutput").innerHTML += data.ChatText;
+    var elem = document.getElementById('TextOutput');
+    elem.scrollTop = elem.scrollHeight;
+  });
+
+  var SendData = function(){
+    var InputText = document.getElementById('InputText').value;
+    var InputName = document.getElementById('InputName').value;
+    console.log(InputName + ': ' + InputText);
+    socket.emit('ServerMSG',{
+      name: InputName,
+      content: InputText
+    });
+  }
+  
+</script>
+
+<button onclick="SendData()" style="background-color: #2987FF; border: none; color: white; padding: 15px 50%; margin: auto; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; width: 50%;">Send</button>
